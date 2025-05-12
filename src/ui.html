@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Badge & Frame Flow UI</title>
+  <style>
+    body {
+      font-family: "Inter", sans-serif;
+      margin: 0;
+      padding: 16px;
+      box-sizing: border-box;
+      font-size: 12px;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .section {
+      border: 1px solid #e0e0e0;
+      padding: 12px;
+      border-radius: 6px;
+    }
+    .section h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 11px;
+      color: #333333;
+    }
+    .form-group select,
+    .form-group input[type="text"],
+    .form-group input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .color-selector-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .preset-colors {
+      display: flex;
+      gap: 6px;
+    }
+    .color-swatch {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+      box-sizing: border-box;
+    }
+    .color-swatch.selected {
+      border-color: #0077d9;
+    }
+    #badge-color-picker-input {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 1px solid #cccccc;
+      border-radius: 4px;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    .button-group {
+        display: flex;
+        flex-direction: column; /* Changed to column for multiple create buttons */
+        gap: 8px;
+        margin-top: 8px;
+    }
+    button {
+      flex-grow: 1;
+      padding: 9px 15px;
+      background-color: #18a0fb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background-color 0.15s ease;
+    }
+    button:hover {
+      background-color: #0077d9;
+    }
+    button:disabled {
+        background-color: #b0b0b0;
+        cursor: not-allowed;
+    }
+    button#cancel {
+        background-color: #e0e0e0;
+        color: #333333;
+        margin-top: 8px; /* Add some space before cancel if it's last */
+    }
+    button#cancel:hover {
+        background-color: #cccccc;
+    }
+    .edit-section { /* Common class for edit sections */
+        display: none; /* Hidden by default */
+    }
+    #no-selection-message {
+        text-align: center;
+        color: #777;
+        font-style: italic;
+        padding: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h3>아이템 생성기</h3>
+
+    <div class="section" id="badge-creation-options">
+      <h3>단일 뱃지 생성</h3>
+      <div class="form-group">
+        <label for="badge-size">뱃지 사이즈:</label>
+        <select id="badge-size">
+          <option value="small">작게 (18px)</option>
+          <option value="medium" selected>중간 (24px)</option>
+          <option value="large">크게 (32px)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>뱃지 배경 색상:</label>
+        <div class="color-selector-container">
+          <div class="preset-colors">
+            <span class="color-swatch" data-color="#FF4E4E" style="background-color: #FF4E4E;" title="Red"></span>
+            <span class="color-swatch" data-color="#F3BA00" style="background-color: #F3BA00;" title="Orange"></span>
+            <span class="color-swatch" data-color="#58CF2D" style="background-color: #58CF2D;" title="Green"></span>
+            <span class="color-swatch" data-color="#1D8DF8" style="background-color: #1D8DF8;" title="Blue"></span>
+            <span class="color-swatch" data-color="#9000FF" style="background-color: #9000FF;" title="Purple"></span>
+            <span class="color-swatch" data-color="#00B1D0" style="background-color: #00B1D0;" title="Teal"></span>
+            <span class="color-swatch" data-color="#383838" style="background-color: #383838;" title="Dark Gray"></span>
+          </div>
+          <input type="color" id="badge-color-picker-input">
+        </div>
+      </div>
+      <button id="create-badge">단일 뱃지 생성</button>
+    </div>
+
+    <div class="section" id="desc-frame-creation-options">
+        <h3>설명 프레임 생성</h3>
+        <div class="form-group">
+            <label for="desc-frame-size">프레임 사이즈:</label>
+            <select id="desc-frame-size">
+              <option value="small">Small (360px 폭)</option>
+              <option value="medium" selected>Medium (480px 폭)</option>
+              <option value="large">Large (800px 폭)</option>
+            </select>
+        </div>
+        <button id="create-description-frame">설명 프레임 생성</button>
+    </div>
+
+
+    <div class="section edit-section" id="edit-badge-options">
+        <h3>선택된 뱃지 수정</h3>
+        <div class="form-group">
+            <label for="edit-badge-number">새 번호:</label>
+            <input type="number" id="edit-badge-number" min="1">
+        </div>
+        <button id="update-badge-number" disabled>뱃지 번호 업데이트</button>
+    </div>
+
+    <div class="section edit-section" id="edit-desc-frame-options">
+        <h3>선택된 설명 프레임 수정</h3>
+        <div class="form-group">
+            <label for="edit-desc-frame-number">새 번호:</label>
+            <input type="number" id="edit-desc-frame-number" min="1">
+        </div>
+        <button id="update-desc-frame-number" disabled>프레임 번호 업데이트</button>
+    </div>
+    <div id="no-selection-message">
+        수정할 아이템을 선택하세요.
+    </div>
+
+    <button id="cancel">닫기</button>
+  </div>
+
+  <script>
+    const createBadgeButton = document.getElementById('create-badge');
+    const createDescriptionFrameButton = document.getElementById('create-description-frame');
+    const cancelButton = document.getElementById('cancel');
+
+    const badgeSizeSelect = document.getElementById('badge-size');
+    const descFrameSizeSelect = document.getElementById('desc-frame-size');
+
+    // --- Color Selection Logic (for standalone badges) ---
+    const presetColorSwatches = document.querySelectorAll('.color-swatch');
+    const colorPickerInput = document.getElementById('badge-color-picker-input');
+    let currentSelectedBadgeColor = '#FF4E4E'; // Default
+
+    function initializeColorSelector() {
+      colorPickerInput.value = currentSelectedBadgeColor;
+      const initialSwatch = Array.from(presetColorSwatches).find(s => s.dataset.color === currentSelectedBadgeColor);
+      if (initialSwatch) initialSwatch.classList.add('selected');
+
+      presetColorSwatches.forEach(swatch => {
+        swatch.addEventListener('click', function() {
+          currentSelectedBadgeColor = this.dataset.color;
+          colorPickerInput.value = currentSelectedBadgeColor;
+          updateSelectedSwatchVisual(this);
+        });
+      });
+    }
+    function updateSelectedSwatchVisual(selectedSwatchElement) {
+      presetColorSwatches.forEach(s => s.classList.remove('selected'));
+      if (selectedSwatchElement) {
+        selectedSwatchElement.classList.add('selected');
+      }
+    }
+    colorPickerInput.addEventListener('input', function() {
+      currentSelectedBadgeColor = this.value;
+      updateSelectedSwatchVisual(null);
+    });
+    initializeColorSelector();
+    // --- End Color Selection Logic ---
+
+    // Edit UI Elements
+    const editBadgeSection = document.getElementById('edit-badge-options');
+    const editBadgeNumberInput = document.getElementById('edit-badge-number');
+    const updateBadgeNumberButton = document.getElementById('update-badge-number');
+
+    const editDescFrameSection = document.getElementById('edit-desc-frame-options');
+    const editDescFrameNumberInput = document.getElementById('edit-desc-frame-number');
+    const updateDescFrameNumberButton = document.getElementById('update-desc-frame-number');
+    
+    const noSelectionMessage = document.getElementById('no-selection-message');
+
+    let selectedItemForEdit = null; // Store {id, number, sequenceId, itemType, size}
+
+    createBadgeButton.onclick = () => {
+      const options = {
+        badge: {
+          size: badgeSizeSelect.value,
+          color: currentSelectedBadgeColor,
+        }
+      };
+      parent.postMessage({ pluginMessage: { type: 'create-badge', options } }, '*');
+    };
+
+    createDescriptionFrameButton.onclick = () => {
+        const options = {
+            descriptionFrame: {
+                size: descFrameSizeSelect.value,
+            }
+        };
+        parent.postMessage({ pluginMessage: { type: 'create-description-frame', options } }, '*');
+    };
+
+    cancelButton.onclick = () => {
+      parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
+    };
+
+    updateBadgeNumberButton.onclick = () => {
+      if (selectedItemForEdit && selectedItemForEdit.itemType === 'badge') {
+        const newNumber = parseInt(editBadgeNumberInput.value, 10);
+        if (isNaN(newNumber) || newNumber < 1) {
+          alert("유효한 번호를 입력해주세요 (1 이상).");
+          return;
+        }
+        parent.postMessage({
+          pluginMessage: {
+            type: 'update-badge-number', // Specific type for backend
+            badgeId: selectedItemForEdit.id,
+            sequenceId: selectedItemForEdit.sequenceId,
+            newNumber: newNumber
+          }
+        }, '*');
+      }
+    };
+
+    updateDescFrameNumberButton.onclick = () => {
+        if (selectedItemForEdit && selectedItemForEdit.itemType === 'descriptionFrame') {
+            const newNumber = parseInt(editDescFrameNumberInput.value, 10);
+            if (isNaN(newNumber) || newNumber < 1) {
+                alert("유효한 번호를 입력해주세요 (1 이상).");
+                return;
+            }
+            parent.postMessage({
+                pluginMessage: {
+                    type: 'update-description-frame-number', // Specific type for backend
+                    badgeId: selectedItemForEdit.id, // This is the frame's ID
+                    sequenceId: selectedItemForEdit.sequenceId,
+                    newNumber: newNumber
+                }
+            }, '*');
+        }
+    };
+
+    function showEditSection(itemType) {
+        editBadgeSection.style.display = 'none';
+        editDescFrameSection.style.display = 'none';
+        noSelectionMessage.style.display = 'block'; // Show by default
+
+        if (itemType === 'badge') {
+            editBadgeSection.style.display = 'block';
+            noSelectionMessage.style.display = 'none';
+        } else if (itemType === 'descriptionFrame') {
+            editDescFrameSection.style.display = 'block';
+            noSelectionMessage.style.display = 'none';
+        }
+    }
+
+
+    window.onmessage = async (event) => {
+      const pluginMessage = event.data.pluginMessage;
+      if (!pluginMessage) return;
+
+      if (pluginMessage.type === 'selection-changed' && pluginMessage.selectedItemInfo) {
+        selectedItemForEdit = pluginMessage.selectedItemInfo;
+        showEditSection('badge');
+        editBadgeNumberInput.value = selectedItemForEdit.number;
+        updateBadgeNumberButton.disabled = false;
+
+      } else if (pluginMessage.type === 'desc-frame-selection-changed' && pluginMessage.selectedItemInfo) {
+        selectedItemForEdit = pluginMessage.selectedItemInfo;
+        showEditSection('descriptionFrame');
+        editDescFrameNumberInput.value = selectedItemForEdit.number;
+        updateDescFrameNumberButton.disabled = false;
+
+      } else if (pluginMessage.type === 'clear-selection') {
+        selectedItemForEdit = null;
+        showEditSection(null); // Hide all edit sections
+        updateBadgeNumberButton.disabled = true;
+        editBadgeNumberInput.value = '';
+        updateDescFrameNumberButton.disabled = true;
+        editDescFrameNumberInput.value = '';
+      }
+    };
+
+    // Initial state: no selection
+    showEditSection(null);
+
+  </script>
+</body>
+</html>
