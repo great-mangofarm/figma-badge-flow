@@ -24,7 +24,6 @@ const badgeStyles= {
   small: { diameter: 18, textFontSize: 12 },
 } as const;
 
-type BadgeStyleKeys = keyof typeof badgeStyles;
 
 // Font definitions
 const BADGE_FONT_FAMILY = "Inter";
@@ -60,6 +59,7 @@ const descriptionFrameStyles = {
         fontFamily: DESC_FRAME_TEXT_FONT_FAMILY,
         fontStyle: DESC_FRAME_TEXT_FONT_STYLE,
         fontSize: 18,
+        lineHeight: 26,
     },
     medium: {
         badgeSizeKey: 'small',
@@ -68,6 +68,7 @@ const descriptionFrameStyles = {
         fontFamily: DESC_FRAME_TEXT_FONT_FAMILY,
         fontStyle: DESC_FRAME_TEXT_FONT_STYLE,
         fontSize: 16,
+        lineHeight:24,
     },
     small: {
         badgeSizeKey: 'small',
@@ -76,9 +77,9 @@ const descriptionFrameStyles = {
         fontFamily: DESC_FRAME_TEXT_FONT_FAMILY,
         fontStyle: DESC_FRAME_TEXT_FONT_STYLE,
         fontSize: 14,
+        lineHeight: 20,
     }
 } as const;
-type DescriptionFrameStyleKeys = keyof typeof descriptionFrameStyles;
 // --- End Description Frame Definitions ---
 
 
@@ -249,35 +250,51 @@ figma.ui.onmessage = async (msg) => {
         frame.paddingBottom = style.padding;
         frame.itemSpacing = commonStyle.badgeTextSpacing;
         frame.layoutMode = "HORIZONTAL";
-        frame.primaryAxisSizingMode = "FIXED"; // Width is fixed
-        frame.counterAxisSizingMode = "AUTO";  // Height adjusts to content
-        frame.resize(style.frameWidth, 0); // Initial height set to 0, auto-layout will adjust
+        frame.primaryAxisSizingMode = "FIXED";
+        frame.counterAxisSizingMode = "AUTO"; 
 
         // 2. Create the badge within the frame
         // For description frames, badge color is typically neutral or taken from a default. Let's use a default gray.
         // Or, if you want the user to select color for badges *inside* frames, the UI message needs to carry that.
         // For now, using a fixed color for badges in description frames.
-        const badgeColorInFrame = hexToRgb("#CCCCCC") || {r:0.8, g:0.8, b:0.8}; // Default gray
+        const badgeColorInFrame = hexToRgb("#383838") || {r:56/255,g:56/255,b:56/255};
         const internalBadge = await createBadgeNode(nextNumber, style.badgeSizeKey, badgeColorInFrame);
         if (internalBadge) {
-            // Make sure badge does not grow with auto-layout
-            internalBadge.layoutAlign = "CENTER";
-            internalBadge.layoutGrow = 0;
-            frame.appendChild(internalBadge);
+          // 1) 래퍼 Frame 만들기
+          const badgeWrapper = figma.createFrame();
+          badgeWrapper.name = "Badge Wrapper";
+          badgeWrapper.fills = [];                         // 배경 없음
+          badgeWrapper.layoutMode = "VERTICAL";            // 세로 Auto-layout
+          badgeWrapper.primaryAxisSizingMode = "FIXED";    // 높이 고정
+          badgeWrapper.counterAxisSizingMode = "AUTO";     // 너비 hug
+          badgeWrapper.primaryAxisAlignItems = "CENTER";   // 래퍼 안에서 뱃지 수직 중앙
+        
+          // 2) 래퍼 높이를 “첫 줄 행간”으로 맞추기
+          badgeWrapper.resize(internalBadge.width, style.lineHeight);
+        
+          // 3) 뱃지를 래퍼에 붙이고, 래퍼를 최상단 정렬
+          internalBadge.layoutAlign = "CENTER";
+          badgeWrapper.appendChild(internalBadge);
+          badgeWrapper.layoutAlign = "MIN";    // 부모 frame에서 TOP 정렬
+        
+          // 4) 래퍼를 부모 frame에 붙이기
+          frame.appendChild(badgeWrapper);
         } else {
-            figma.notify("오류: 설명 프레임 내 뱃지 생성 실패.", {error: true});
-            frame.remove(); // Clean up partially created frame
-            return;
+          figma.notify("오류: 설명 프레임 내 뱃지 생성 실패.", {error: true});
+          frame.remove();
+          return;
         }
 
 
         // 3. Create the text node
+        await figma.loadFontAsync({ family: style.fontFamily, style: style.fontStyle });
+
         const textNode = figma.createText();
         textNode.name = "Description Text";
-        textNode.characters = commonStyle.placeholderText;
-        await figma.loadFontAsync({ family: style.fontFamily, style: style.fontStyle });
         textNode.fontName = { family: style.fontFamily, style: style.fontStyle };
         textNode.fontSize = style.fontSize;
+        textNode.lineHeight = { value: style.lineHeight, unit: "PIXELS" };
+        textNode.characters = commonStyle.placeholderText;
         const textColor = hexToRgb(commonStyle.textColorHex);
         if (textColor) {
             textNode.fills = [{ type: 'SOLID', color: textColor }];
@@ -289,7 +306,7 @@ figma.ui.onmessage = async (msg) => {
         textNode.textAutoResize = "HEIGHT"; // Adjust height based on content
 
         frame.appendChild(textNode);
-
+        frame.resize(style.frameWidth, frame.height);
         // Set plugin data on the main frame
         frame.setPluginData(DESC_FRAME_ITEM_PLUGIN_DATA_KEY, "true");
         frame.setPluginData(DESC_FRAME_NUMBER_PLUGIN_DATA_KEY, nextNumber.toString());
@@ -313,9 +330,10 @@ figma.ui.onmessage = async (msg) => {
     }
 
   } else if (msg.type === 'update-badge-number' || msg.type === 'update-description-frame-number') {
+    const isDescriptionFrame = msg.type === 'update-description-frame-number';
     try {
       const { badgeId, sequenceId, newNumber: newNumberInput } = msg;
-      const isDescriptionFrame = msg.type === 'update-description-frame-number';
+    
 
       const ITEM_KEY = isDescriptionFrame ? DESC_FRAME_ITEM_PLUGIN_DATA_KEY : BADGE_ITEM_PLUGIN_DATA_KEY;
       const NUMBER_KEY = isDescriptionFrame ? DESC_FRAME_NUMBER_PLUGIN_DATA_KEY : BADGE_NUMBER_PLUGIN_DATA_KEY;
