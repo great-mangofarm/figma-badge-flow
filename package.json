@@ -1,48 +1,48 @@
 {
-  "name": "badge-flow",
-  "version": "1.0.0",
-  "description": "Your Figma Plugin",
-  "main": "code.js",
-  "scripts": {
-    "build:ts": "tsc -p tsconfig.json",
-    "copy:html": "cp src/ui.html dist/ui.html",
-    "build": "npm run build:ts && npm run copy:html",
-    "watch:ts": "tsc -p tsconfig.json -w",
-    "watch:html": "onchange 'src/ui.html' -- npm run copy:html",
-    "dev": "concurrently \"npm:watch:ts\" \"npm:watch:html\""
-  },
-  "author": "",
-  "license": "",
-  "devDependencies": {
-    "@figma/eslint-plugin-figma-plugins": "*",
-    "@figma/plugin-typings": "*",
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
-    "concurrently": "^9.1.2",
-    "eslint": "^8.54.0",
-    "onchange": "^7.1.0",
-    "typescript": "^5.3.2"
-  },
-  "eslintConfig": {
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:@figma/figma-plugins/recommended"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "project": "./tsconfig.json"
+    "name": "feature-labeler",
+    "version": "1.0.0",
+    "description": "Your Figma Plugin",
+    "main": "code.js",
+    "scripts": {
+        "build:ts": "tsc -p tsconfig.json",
+        "copy:html": "cp src/ui.html dist/ui.html",
+        "build": "npm run build:ts && npm run copy:html",
+        "watch:ts": "tsc -p tsconfig.json -w",
+        "watch:html": "onchange 'src/ui.html' -- npm run copy:html",
+        "dev": "concurrently \"npm:watch:ts\" \"npm:watch:html\""
     },
-    "root": true,
-    "rules": {
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_",
-          "caughtErrorsIgnorePattern": "^_"
+    "author": "",
+    "license": "",
+    "devDependencies": {
+        "@figma/eslint-plugin-figma-plugins": "*",
+        "@figma/plugin-typings": "*",
+        "@typescript-eslint/eslint-plugin": "^6.12.0",
+        "@typescript-eslint/parser": "^6.12.0",
+        "concurrently": "^9.1.2",
+        "eslint": "^8.54.0",
+        "onchange": "^7.1.0",
+        "typescript": "^5.3.2"
+    },
+    "eslintConfig": {
+        "extends": [
+            "eslint:recommended",
+            "plugin:@typescript-eslint/recommended",
+            "plugin:@figma/figma-plugins/recommended"
+        ],
+        "parser": "@typescript-eslint/parser",
+        "parserOptions": {
+            "project": "./tsconfig.json"
+        },
+        "root": true,
+        "rules": {
+            "@typescript-eslint/no-unused-vars": [
+                "error",
+                {
+                    "argsIgnorePattern": "^_",
+                    "varsIgnorePattern": "^_",
+                    "caughtErrorsIgnorePattern": "^_"
+                }
+            ]
         }
-      ]
     }
-  }
 }

@@ -1,18 +1,14 @@
 {
-  "name": "Badge-Flow",
-  "id": "1503606855629446521", 
-  "main": "dist/code.js",     
-  "api": "1.0.0",   
-  "capabilities": [],
-  "enableProposedApi": false,
-  "documentAccess": "dynamic-page",
-  "editorType": [
-    "figma"
-  ],
-  "ui": "dist/ui.html",       
-  "networkAccess": {
-    "allowedDomains": [
-      "none"
-    ]
-  }
+    "name": "Feature-Labeler",
+    "id": "1503606855629446521",
+    "main": "dist/code.js",
+    "api": "1.0.0",
+    "capabilities": [],
+    "enableProposedApi": false,
+    "documentAccess": "dynamic-page",
+    "editorType": ["figma"],
+    "ui": "dist/ui.html",
+    "networkAccess": {
+        "allowedDomains": ["none"]
+    }
 }
