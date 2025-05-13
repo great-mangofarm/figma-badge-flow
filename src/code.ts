@@ -54,7 +54,7 @@ const DESC_FRAME_SIZE_PLUGIN_DATA_KEY = "descFrameSizeType_v1"; // To store 'lar
 const COMMON_DESCRIPTION_FRAME_PROPERTIES = {
     backgroundColor: { r: 1, g: 1, b: 1 }, // White
     cornerRadius: 10,
-    placeholderText: "텍스트를 입력하세요",
+    placeholderText: "Enter text.",
     badgeTextSpacing: 8, // Space between badge and text block
     textColorHex: "#383838",
 };
@@ -136,7 +136,7 @@ figma.ui.onmessage = async (msg) => {
         const styleKey = options.size as keyof typeof badgeStyles;
 
         if (!badgeStyles[styleKey]) {
-            figma.notify("오류: 유효하지 않은 뱃지 크기입니다.", {
+            figma.notify("Error: Invalid badge size.", {
                 error: true,
             });
             return;
@@ -146,7 +146,7 @@ figma.ui.onmessage = async (msg) => {
         const badgeFigmaColor = hexToRgb(badgeColorHex);
 
         if (!badgeFigmaColor) {
-            figma.notify("오류: 유효하지 않은 뱃지 색상입니다.", {
+            figma.notify("Error: Invalid badge color.", {
                 error: true,
             });
             return;
@@ -197,7 +197,7 @@ figma.ui.onmessage = async (msg) => {
                 badgeFigmaColor
             );
             if (!badgeNode) {
-                figma.notify("오류: 뱃지 노드 생성에 실패했습니다.", {
+                figma.notify("Error: Failed to create badge node.", {
                     error: true,
                 });
                 return;
@@ -209,7 +209,7 @@ figma.ui.onmessage = async (msg) => {
                 parts.length >= 3
                     ? parts[2].substring(0, 4)
                     : currentSequenceId.substring(currentSequenceId.length - 4);
-            badgeNode.name = `Badge (S:${displaySeqId}, N:${nextNumber})`;
+            badgeNode.name = `N:${nextNumber} (S:${displaySeqId})`;
 
             badgeNode.setPluginData(BADGE_ITEM_PLUGIN_DATA_KEY, "true");
             badgeNode.setPluginData(
@@ -227,13 +227,16 @@ figma.ui.onmessage = async (msg) => {
             badgeNode.y = centerY - badgeNode.height / 2;
 
             figma.currentPage.selection = [badgeNode];
-            figma.notify(`뱃지 ${nextNumber} (시퀀스 ${displaySeqId}) 생성됨`, {
-                timeout: 2000,
-            });
+            figma.notify(
+                `Badge ${nextNumber} (Sequence ${displaySeqId}) created`,
+                {
+                    timeout: 2000,
+                }
+            );
         } catch (error) {
             console.error("Error creating badge:", error);
             const err = error as Error;
-            figma.notify(`오류: ${err.message}`, {
+            figma.notify(`Error: ${err.message}`, {
                 error: true,
                 timeout: 3000,
             });
@@ -250,10 +253,10 @@ figma.ui.onmessage = async (msg) => {
                 targetNode.type !== "GROUP" ||
                 targetNode.getPluginData(BADGE_ITEM_PLUGIN_DATA_KEY) !== "true"
             ) {
-                figma.notify(
-                    "오류: 대상 뱃지를 찾을 수 없거나 유효하지 않습니다.",
-                    { error: true, timeout: 3000 }
-                );
+                figma.notify("Error: Target badge not found or invalid.", {
+                    error: true,
+                    timeout: 3000,
+                });
                 return;
             }
 
@@ -261,7 +264,7 @@ figma.ui.onmessage = async (msg) => {
             const badgeFigmaColor = hexToRgb(badgeColorHex);
 
             if (!badgeFigmaColor) {
-                figma.notify("오류: 유효하지 않은 뱃지 색상입니다.", {
+                figma.notify("Error: Invalid badge color.", {
                     error: true,
                 });
                 return;
@@ -274,7 +277,7 @@ figma.ui.onmessage = async (msg) => {
             ) as EllipseNode | undefined;
 
             if (!circleNode) {
-                figma.notify("오류: 뱃지 원형을 찾을 수 없습니다.", {
+                figma.notify("Error: Cannot find badge circle.", {
                     error: true,
                 });
                 return;
@@ -283,11 +286,11 @@ figma.ui.onmessage = async (msg) => {
             // 색상 업데이트
             circleNode.fills = [{ type: "SOLID", color: badgeFigmaColor }];
 
-            figma.notify("뱃지 색상이 업데이트되었습니다.", { timeout: 2000 });
+            figma.notify("Badge color updated.", { timeout: 2000 });
         } catch (error) {
             console.error("Error updating badge color:", error);
             const err = error as Error;
-            figma.notify(`오류 발생: ${err.message}`, {
+            figma.notify(`Error: ${err.message}`, {
                 error: true,
                 timeout: 3000,
             });
@@ -297,7 +300,7 @@ figma.ui.onmessage = async (msg) => {
         const sizeKey = options.size as keyof typeof descriptionFrameStyles;
 
         if (!descriptionFrameStyles[sizeKey]) {
-            figma.notify("오류: 유효하지 않은 설명 프레임 크기입니다.", {
+            figma.notify("Error: Invalid description frame size.", {
                 error: true,
             });
             return;
@@ -361,7 +364,7 @@ figma.ui.onmessage = async (msg) => {
                 parts.length >= 3
                     ? parts[2].substring(0, 4)
                     : currentSequenceId.substring(currentSequenceId.length - 4);
-            frame.name = `DescFrame (S:${displaySeqId}, N:${nextNumber}, Size:${sizeKey})`;
+            frame.name = `D:${nextNumber} (S:${displaySeqId}, ${sizeKey})`;
 
             // Styling
             frame.fills = [
@@ -412,7 +415,7 @@ figma.ui.onmessage = async (msg) => {
                 // 4) 래퍼를 부모 frame에 붙이기
                 frame.appendChild(badgeWrapper);
             } else {
-                figma.notify("오류: 설명 프레임 내 뱃지 생성 실패.", {
+                figma.notify("Error: 설명 프레임 내 뱃지 생성 실패.", {
                     error: true,
                 });
                 frame.remove();
@@ -466,13 +469,13 @@ figma.ui.onmessage = async (msg) => {
 
             figma.currentPage.selection = [frame];
             figma.notify(
-                `설명 프레임 ${nextNumber} (시퀀스 ${displaySeqId}) 생성됨`,
+                `Description frame ${nextNumber} (Sequence ${displaySeqId}) created`,
                 { timeout: 2000 }
             );
         } catch (error) {
             console.error("Error creating description frame:", error);
             const err = error as Error;
-            figma.notify(`설명 프레임 생성 오류: ${err.message}`, {
+            figma.notify(`Description frame creation error: ${err.message}`, {
                 error: true,
                 timeout: 3000,
             });
@@ -500,7 +503,7 @@ figma.ui.onmessage = async (msg) => {
             const newNumber = parseInt(newNumberInput, 10);
             if (isNaN(newNumber) || newNumber < 1) {
                 figma.notify(
-                    `오류: 새 번호는 1 이상의 유효한 숫자여야 합니다. (${NODE_TYPE_NAME})`,
+                    `Error: New number must be a valid number of 1 or higher. (${NODE_TYPE_NAME})`,
                     { error: true, timeout: 3000 }
                 );
                 return;
@@ -515,7 +518,7 @@ figma.ui.onmessage = async (msg) => {
                 targetNode.getPluginData(ITEM_KEY) !== "true"
             ) {
                 figma.notify(
-                    `오류: 대상 ${NODE_TYPE_NAME}을(를) 찾을 수 없거나 유효하지 않습니다.`,
+                    `Error: Target ${NODE_TYPE_NAME} not found or invalid.`,
                     { error: true, timeout: 3000 }
                 );
                 return;
@@ -524,7 +527,7 @@ figma.ui.onmessage = async (msg) => {
             const oldNumberStr = targetNode.getPluginData(NUMBER_KEY);
             if (!oldNumberStr) {
                 figma.notify(
-                    `오류: 대상 ${NODE_TYPE_NAME}의 현재 번호를 읽을 수 없습니다.`,
+                    `Error: 대상 ${NODE_TYPE_NAME}의 현재 번호를 읽을 수 없습니다.`,
                     { error: true, timeout: 3000 }
                 );
                 return;
@@ -532,7 +535,7 @@ figma.ui.onmessage = async (msg) => {
             const oldNumber = parseInt(oldNumberStr, 10);
             if (isNaN(oldNumber)) {
                 figma.notify(
-                    `오류: 대상 ${NODE_TYPE_NAME}의 현재 번호가 유효하지 않습니다.`,
+                    `Error: 대상 ${NODE_TYPE_NAME}의 현재 번호가 유효하지 않습니다.`,
                     { error: true, timeout: 3000 }
                 );
                 return;
@@ -574,7 +577,7 @@ figma.ui.onmessage = async (msg) => {
 
             if (allItemsInSequenceNodes.length === 0) {
                 figma.notify(
-                    `오류: 시퀀스에서 ${NODE_TYPE_NAME}을(를) 찾을 수 없습니다.`,
+                    `Error: 시퀀스에서 ${NODE_TYPE_NAME}을(를) 찾을 수 없습니다.`,
                     { error: true, timeout: 3000 }
                 );
                 return;
@@ -582,7 +585,7 @@ figma.ui.onmessage = async (msg) => {
 
             if (newNumber > allItemsInSequenceNodes.length) {
                 figma.notify(
-                    `오류: 새 번호(${newNumber})는 시퀀스 내 총 ${NODE_TYPE_NAME} 개수(${allItemsInSequenceNodes.length})를 초과할 수 없습니다.`,
+                    `Error: 새 번호(${newNumber})는 시퀀스 내 총 ${NODE_TYPE_NAME} 개수(${allItemsInSequenceNodes.length})를 초과할 수 없습니다.`,
                     { error: true, timeout: 4000 }
                 );
                 return;
@@ -675,7 +678,7 @@ figma.ui.onmessage = async (msg) => {
 
             if (!itemsData.find((b) => b.node.id === targetNode.id)) {
                 figma.notify(
-                    `오류: 대상 ${NODE_TYPE_NAME} 데이터 처리 중 문제가 발생했습니다.`,
+                    `Error: 대상 ${NODE_TYPE_NAME} 데이터 처리 중 문제가 발생했습니다.`,
                     { error: true, timeout: 3000 }
                 );
                 return;
