@@ -1,7 +1,7 @@
 // src/code.ts
 
 figma.showUI(__html__, { width: 320, height: 600 });
-
+figma.root.setRelaunchData({ open: "" });
 function rgbToHex(rgb: { r: number; g: number; b: number }): string {
     const toHex = (value: number) => {
         const hex = Math.round(value * 255).toString(16);
