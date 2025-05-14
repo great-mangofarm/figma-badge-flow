@@ -1,4 +1,4 @@
-# Feature-Labeler
+# Feature-Labeler - Figma Plugin
 
 <img src="https://great-mangofarm.github.io/figma-badge-flow/assets/icons/main_.png" alt="Feature-Labeler main image" width="800"/>
 
