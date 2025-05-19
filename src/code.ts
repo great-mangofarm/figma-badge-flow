@@ -744,15 +744,25 @@ figma.ui.onmessage = async (msg) => {
                             child.name === "Badge Number"
                     ) as TextNode | undefined;
                 } else if (node.type === "FRAME" && isDescriptionFrame) {
-                    const badgeGroup = node.children.find(
-                        (child) => child.type === "GROUP"
-                    ) as GroupNode | undefined;
-                    if (badgeGroup) {
-                        textNodeToUpdate = badgeGroup.children.find(
-                            (child) =>
-                                child.type === "TEXT" &&
-                                child.name === "Badge Number"
-                        ) as TextNode | undefined;
+                    // Badge Wrapper를 먼저 찾고, 그 안에서 Badge Group을 찾습니다
+                    const badgeWrapper = node.children.find(
+                        (child) =>
+                            child.type === "FRAME" &&
+                            child.name === "Badge Wrapper"
+                    ) as FrameNode | undefined;
+
+                    if (badgeWrapper) {
+                        const badgeGroup = badgeWrapper.children.find(
+                            (child) => child.type === "GROUP"
+                        ) as GroupNode | undefined;
+
+                        if (badgeGroup) {
+                            textNodeToUpdate = badgeGroup.children.find(
+                                (child) =>
+                                    child.type === "TEXT" &&
+                                    child.name === "Badge Number"
+                            ) as TextNode | undefined;
+                        }
                     }
                 }
 
