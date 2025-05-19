@@ -4,6 +4,10 @@
 
 ## Version History
 
+**Version 5** (May 19, 2025)
+
+-   Fixed font error.
+
 **Version 4** (May 19, 2025)
 
 -   Fixed an issue where the internal badge number was not updating when changing the description frame number.
@@ -54,6 +58,10 @@ Create numbered badges and description frames for your wireframes with ease. Str
 <img src="https://great-mangofarm.github.io/figma-feature-labeler/assets/icons/icon_.png" alt="Feature-Labeler logo" width="100"/>
 
 ## 버전 기록
+
+**버전 5** (2025년 5월 19일)
+
+-   폰트 에러 수정
 
 **버전 4** (2025년 5월 19일)
 

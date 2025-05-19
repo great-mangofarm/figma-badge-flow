@@ -617,29 +617,38 @@ figma.ui.onmessage = async (msg) => {
                             );
                     }
                 } else if (itemNode.type === "FRAME" && isDescriptionFrame) {
-                    // Description Frame
-                    // Badge inside frame
-                    const badgeGroup = itemNode.children.find(
-                        (child) => child.type === "GROUP"
-                    ) as GroupNode | undefined;
-                    if (badgeGroup) {
-                        const badgeTextNode = badgeGroup.children.find(
-                            (child) =>
-                                child.type === "TEXT" &&
-                                child.name === "Badge Number"
-                        ) as TextNode | undefined;
-                        if (badgeTextNode) {
-                            const font = badgeTextNode.fontName as FontName;
-                            if (font && typeof font !== "symbol")
-                                fontLoadPromises.push(
-                                    figma.loadFontAsync(font)
-                                );
-                            else
-                                fontLoadPromises.push(
-                                    figma.loadFontAsync(defaultBadgeFont)
-                                );
+                    // Badge inside frame - Finding Badge Wrapper first
+                    const badgeWrapper = itemNode.children.find(
+                        (child) =>
+                            child.type === "FRAME" &&
+                            child.name === "Badge Wrapper"
+                    ) as FrameNode | undefined;
+
+                    if (badgeWrapper) {
+                        const badgeGroup = badgeWrapper.children.find(
+                            (child) => child.type === "GROUP"
+                        ) as GroupNode | undefined;
+
+                        if (badgeGroup) {
+                            const badgeTextNode = badgeGroup.children.find(
+                                (child) =>
+                                    child.type === "TEXT" &&
+                                    child.name === "Badge Number"
+                            ) as TextNode | undefined;
+                            if (badgeTextNode) {
+                                const font = badgeTextNode.fontName as FontName;
+                                if (font && typeof font !== "symbol")
+                                    fontLoadPromises.push(
+                                        figma.loadFontAsync(font)
+                                    );
+                                else
+                                    fontLoadPromises.push(
+                                        figma.loadFontAsync(defaultBadgeFont)
+                                    );
+                            }
                         }
                     }
+
                     // Description text (not numbered, but load its font just in case it was default and needs reload for some reason - less critical)
                     const descTextNode = itemNode.children.find(
                         (child) =>
