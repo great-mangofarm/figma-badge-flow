@@ -1,8 +1,12 @@
 # Feature-Labeler - Figma Plugin
 
-<img src="https://great-mangofarm.github.io/figma-badge-flow/assets/icons/main_.png" alt="Feature-Labeler main image" width="800"/>
+<img src="https://great-mangofarm.github.io/figma-feature-labeler/assets/icons/main_.png" alt="Feature-Labeler main image" width="800"/>
 
 ## Version History
+
+**Version 4** (May 19, 2025)
+
+-   Fixed an issue where the internal badge number was not updating when changing the description frame number.
 
 **Version 3** (May 14, 2025)
 
@@ -47,9 +51,13 @@ Create numbered badges and description frames for your wireframes with ease. Str
 
 ---
 
-<img src="https://great-mangofarm.github.io/figma-badge-flow/assets/icons/icon_.png" alt="Feature-Labeler logo" width="100"/>
+<img src="https://great-mangofarm.github.io/figma-feature-labeler/assets/icons/icon_.png" alt="Feature-Labeler logo" width="100"/>
 
 ## 버전 기록
+
+**버전 4** (2025년 5월 19일)
+
+-   설명 프레임의 번호 변경 시 내부 뱃지 번호가 업데이트되지 않는 문제 수정
 
 **버전 3** (2025년 5월 14일)
 
